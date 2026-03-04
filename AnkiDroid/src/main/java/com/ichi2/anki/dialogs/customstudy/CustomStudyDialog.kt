@@ -88,7 +88,6 @@ import com.ichi2.utils.setPaddingRelative
 import com.ichi2.utils.textAsIntOrNull
 import com.ichi2.utils.title
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
 import net.ankiweb.rsdroid.BackendException
 import timber.log.Timber
@@ -123,7 +122,6 @@ import timber.log.Timber
  *
  * @see TagLimitFragment
  */
-@KotlinCleanup("remove 'runBlocking' call'")
 class CustomStudyDialog : AnalyticsDialogFragment() {
     @VisibleForTesting(otherwise = PRIVATE)
     lateinit var binding: FragmentCustomStudyBinding
@@ -184,7 +182,9 @@ class CustomStudyDialog : AnalyticsDialogFragment() {
             Timber.i("Showing Custom Study main menu")
             deferredDefaults = loadCustomStudyDefaults()
             // Select the specified deck
-            runBlocking { withCol { decks.select(viewModel.deckId) } }
+            launchCatchingTask {
+                withCol { decks.select(viewModel.deckId) }
+            }
             buildContextMenu()
         } else {
             Timber.i("Showing Custom Study dialog: $option")
